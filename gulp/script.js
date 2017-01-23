@@ -13,7 +13,7 @@ function headerStream() {
     `// ==UserScript==
 // @name          敲起来
 // @description   当你在敲击键盘的时候, 出现相应键位的动画特效
-// @version       0.3.0
+// @version       ${require('../package.json').version}
 // @author        Axetroy
 // @include       *
 // @grant         none
