@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name          敲起来
+// @name          敲起来 (dart)
 // @description   当你在敲击键盘的时候, 出现相应键位的动画特效
 // @version       1.0.0
 // @author        Axetroy
