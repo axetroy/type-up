@@ -4,8 +4,8 @@ import 'dart:math';
 Point randomXY({int x, int y}) {
   num radius = 50 + new Random().nextInt(50); // 随机的半径
   num angle = new Random().nextInt(360); // 随机的角度
-  int width = 0;
-  int height = 0;
+  num width = 0;
+  num height = 0;
 
   if (angle >= 0 && angle < 90) {
     height = radius * sin(angle * 2 * PI / 360);
