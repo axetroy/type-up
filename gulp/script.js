@@ -11,7 +11,7 @@ let {paths} = require('./config');
 function headerStream() {
   return header(
     `// ==UserScript==
-// @name          敲起来
+// @name          敲起来 (dart)
 // @description   当你在敲击键盘的时候, 出现相应键位的动画特效
 // @version       ${require('../package.json').version}
 // @author        Axetroy
