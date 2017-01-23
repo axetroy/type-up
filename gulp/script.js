@@ -36,7 +36,7 @@ gulp.task('script', function () {
   return gulp.src(path.join(paths.src, '*.dart'))
     .pipe(dart({
       "dest": paths.dist,
-      "checked": true
+      // "checked": true
     }))
     .pipe(headerStream())
     .pipe(gulp.dest(''));
@@ -47,7 +47,7 @@ gulp.task('build', function () {
     .pipe(dart({
       "dest": paths.dist,
       "minify": "true",
-      "checked": true
+      // "checked": true
     }))
     .pipe(uglify())
     .pipe(headerStream())
