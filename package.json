@@ -1,0 +1,21 @@
+{
+  "name": "dart-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp watch",
+    "build": "gulp build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-dart": "^0.2.4",
+    "gulp-header": "^1.8.8",
+    "gulp-uglify": "^2.0.0",
+    "wrench": "^1.5.9"
+  }
+}
