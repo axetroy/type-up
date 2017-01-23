@@ -884,18 +884,6 @@
           throw H.wrapException(P.ArgumentError$value(other, null, null));
         return receiver + other;
       },
-      startsWith$2: function(receiver, pattern, index) {
-        var endIndex;
-        if (index > receiver.length)
-          throw H.wrapException(P.RangeError$range(index, 0, receiver.length, null, null));
-        endIndex = index + pattern.length;
-        if (endIndex > receiver.length)
-          return false;
-        return pattern === receiver.substring(index, endIndex);
-      },
-      startsWith$1: function($receiver, pattern) {
-        return this.startsWith$2($receiver, pattern, 0);
-      },
       substring$2: function(receiver, startIndex, endIndex) {
         if (endIndex == null)
           endIndex = receiver.length;
@@ -6307,7 +6295,7 @@
     },
     HtmlElement: {
       "^": "Element;",
-      "%": "HTMLAppletElement|HTMLBRElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLImageElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLOptGroupElement|HTMLOptionElement|HTMLParagraphElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableHeaderCellElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement|PluginPlaceholderElement;HTMLElement"
+      "%": "HTMLAppletElement|HTMLBRElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLImageElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLOptGroupElement|HTMLOptionElement|HTMLParagraphElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement|PluginPlaceholderElement;HTMLElement"
     },
     AnchorElement: {
       "^": "HtmlElement;hostname=,href},port=,protocol=",
@@ -6393,14 +6381,14 @@
       "%": "DOMException"
     },
     Element: {
-      "^": "Node;tagName=",
+      "^": "Node;style=,tagName=",
       get$attributes: function(receiver) {
         return new W._ElementAttributeMap(receiver);
       },
       toString$0: function(receiver) {
         return receiver.localName;
       },
-      createFragment$3$treeSanitizer$validator: ["super$Element$createFragment", function(receiver, html, treeSanitizer, validator) {
+      createFragment$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
         var t1, t2, base, contextElement, fragment;
         if (treeSanitizer == null) {
           t1 = $.Element__defaultValidator;
@@ -6458,18 +6446,6 @@
         treeSanitizer.sanitizeTree$1(fragment);
         document.adoptNode(fragment);
         return fragment;
-      }, function($receiver, html, treeSanitizer) {
-        return this.createFragment$3$treeSanitizer$validator($receiver, html, treeSanitizer, null);
-      }, "createFragment$2$treeSanitizer", null, null, "get$createFragment", 2, 5, null, 0, 0],
-      set$innerHtml: function(receiver, html) {
-        this.setInnerHtml$1(receiver, html);
-      },
-      setInnerHtml$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
-        receiver.textContent = null;
-        receiver.appendChild(this.createFragment$3$treeSanitizer$validator(receiver, html, treeSanitizer, validator));
-      },
-      setInnerHtml$1: function($receiver, html) {
-        return this.setInnerHtml$3$treeSanitizer$validator($receiver, html, null, null);
       },
       $isElement: 1,
       $isNode: 1,
@@ -6587,25 +6563,6 @@
     },
     _ChildNodeListLazy: {
       "^": "ListBase;_this",
-      get$single: function(_) {
-        var t1, l;
-        t1 = this._this;
-        l = t1.childNodes.length;
-        if (l === 0)
-          throw H.wrapException(new P.StateError("No elements"));
-        if (l > 1)
-          throw H.wrapException(new P.StateError("More than one element"));
-        return t1.firstChild;
-      },
-      addAll$1: function(_, iterable) {
-        var t1, t2, len, i;
-        t1 = iterable._this;
-        t2 = this._this;
-        if (t1 !== t2)
-          for (len = t1.childNodes.length, i = 0; i < len; ++i)
-            t2.appendChild(t1.firstChild);
-        return;
-      },
       $indexSet: function(_, index, value) {
         var t1, t2;
         t1 = this._this;
@@ -6615,7 +6572,8 @@
         t1.replaceChild(value, t2[index]);
       },
       get$iterator: function(_) {
-        return W.FixedSizeListIterator$(this._this.childNodes);
+        var t1 = this._this.childNodes;
+        return new W.FixedSizeListIterator(t1, t1.length, -1, null);
       },
       get$length: function(_) {
         return this._this.childNodes.length;
@@ -6638,9 +6596,6 @@
     },
     Node: {
       "^": "EventTarget;parentNode=,previousNode:previousSibling=",
-      get$nodes: function(receiver) {
-        return new W._ChildNodeListLazy(receiver);
-      },
       remove$0: function(receiver) {
         var t1 = receiver.parentNode;
         if (t1 != null)
@@ -6732,72 +6687,8 @@
       "^": "Event;error=",
       "%": "SpeechRecognitionError"
     },
-    TableElement: {
-      "^": "HtmlElement;",
-      createFragment$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
-        var table, fragment;
-        if ("createContextualFragment" in window.Range.prototype)
-          return this.super$Element$createFragment(receiver, html, treeSanitizer, validator);
-        table = W.Element_Element$html("<table>" + html + "</table>", treeSanitizer, validator);
-        fragment = document.createDocumentFragment();
-        fragment.toString;
-        new W._ChildNodeListLazy(fragment).addAll$1(0, J.get$nodes$x(table));
-        return fragment;
-      },
-      "%": "HTMLTableElement"
-    },
-    TableRowElement: {
-      "^": "HtmlElement;",
-      createFragment$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
-        var t1, fragment, section, row;
-        if ("createContextualFragment" in window.Range.prototype)
-          return this.super$Element$createFragment(receiver, html, treeSanitizer, validator);
-        t1 = document;
-        fragment = t1.createDocumentFragment();
-        t1 = J.createFragment$3$treeSanitizer$validator$x(t1.createElement("table"), html, treeSanitizer, validator);
-        t1.toString;
-        t1 = new W._ChildNodeListLazy(t1);
-        section = t1.get$single(t1);
-        section.toString;
-        t1 = new W._ChildNodeListLazy(section);
-        row = t1.get$single(t1);
-        fragment.toString;
-        row.toString;
-        new W._ChildNodeListLazy(fragment).addAll$1(0, new W._ChildNodeListLazy(row));
-        return fragment;
-      },
-      "%": "HTMLTableRowElement"
-    },
-    TableSectionElement: {
-      "^": "HtmlElement;",
-      createFragment$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
-        var t1, fragment, section;
-        if ("createContextualFragment" in window.Range.prototype)
-          return this.super$Element$createFragment(receiver, html, treeSanitizer, validator);
-        t1 = document;
-        fragment = t1.createDocumentFragment();
-        t1 = J.createFragment$3$treeSanitizer$validator$x(t1.createElement("table"), html, treeSanitizer, validator);
-        t1.toString;
-        t1 = new W._ChildNodeListLazy(t1);
-        section = t1.get$single(t1);
-        fragment.toString;
-        section.toString;
-        new W._ChildNodeListLazy(fragment).addAll$1(0, new W._ChildNodeListLazy(section));
-        return fragment;
-      },
-      "%": "HTMLTableSectionElement"
-    },
     TemplateElement: {
       "^": "HtmlElement;",
-      setInnerHtml$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
-        var fragment;
-        receiver.textContent = null;
-        fragment = this.createFragment$3$treeSanitizer$validator(receiver, html, treeSanitizer, validator);
-        receiver.content.appendChild(fragment);
-      },
-      setInnerHtml$1: function($receiver, html) {
-        return this.setInnerHtml$3$treeSanitizer$validator($receiver, html, null, null);
-      },
       $isTemplateElement: 1,
       "%": "HTMLTemplateElement"
     },
@@ -7050,7 +6941,7 @@
     ImmutableListMixin: {
       "^": "Object;$ti",
       get$iterator: function(receiver) {
-        return W.FixedSizeListIterator$(receiver);
+        return new W.FixedSizeListIterator(receiver, this.get$length(receiver), -1, null);
       },
       $isList: 1,
       $asList: null,
@@ -7153,25 +7044,6 @@
         return "TEMPLATE::" + H.S(attr);
       }
     },
-    _SvgNodeValidator: {
-      "^": "Object;",
-      allowsElement$1: function(element) {
-        var t1 = J.getInterceptor(element);
-        if (!!t1.$isScriptElement)
-          return false;
-        t1 = !!t1.$isSvgElement;
-        if (t1 && W.Element__safeTagName(element) === "foreignObject")
-          return false;
-        if (t1)
-          return true;
-        return false;
-      },
-      allowsAttribute$3: function(element, attributeName, value) {
-        if (attributeName === "is" || C.JSString_methods.startsWith$1(attributeName, "on"))
-          return false;
-        return this.allowsElement$1(element);
-      }
-    },
     FixedSizeListIterator: {
       "^": "Object;_array,_html$_length,_position,_current",
       moveNext$0: function() {
@@ -7189,11 +7061,6 @@
       },
       get$current: function() {
         return this._current;
-      },
-      static: {
-        FixedSizeListIterator$: function(array) {
-          return new W.FixedSizeListIterator(array, J.get$length$asx(array), -1, null);
-        }
       }
     },
     KeyEvent: {
@@ -7452,12 +7319,17 @@
         t3 = t2.get$x(other);
         if (typeof t1 !== "number")
           return t1.$add();
-        t3 = C.JSInt_methods.$add(t1, t3);
+        t3 = C.JSNumber_methods.$add(t1, t3);
         t1 = this.y;
         t2 = t2.get$y(other);
         if (typeof t1 !== "number")
           return t1.$add();
-        return new P.Point(t3, C.JSInt_methods.$add(t1, t2), this.$ti);
+        return new P.Point(t3, C.JSNumber_methods.$add(t1, t2), this.$ti);
+      },
+      static: {
+        Point$: function(x, y, $T) {
+          return new P.Point(x, y, [$T]);
+        }
       }
     }
   }], ["dart.dom.svg", "dart:svg",, P, {
@@ -7582,38 +7454,13 @@
       $isInterceptor: 1,
       "%": "SVGPatternElement"
     },
-    ScriptElement: {
+    ScriptElement0: {
       "^": "SvgElement;",
-      $isScriptElement: 1,
       $isInterceptor: 1,
       "%": "SVGScriptElement"
     },
     SvgElement: {
       "^": "Element;",
-      set$innerHtml: function(receiver, value) {
-        this.setInnerHtml$1(receiver, value);
-      },
-      createFragment$3$treeSanitizer$validator: function(receiver, svg, treeSanitizer, validator) {
-        var t1, html, t2, fragment, svgFragment, root;
-        t1 = H.setRuntimeTypeInfo([], [W.NodeValidator]);
-        validator = new W.NodeValidatorBuilder(t1);
-        t1.push(W._Html5NodeValidator$(null));
-        t1.push(W._TemplatingNodeValidator$());
-        t1.push(new W._SvgNodeValidator());
-        treeSanitizer = new W._ValidatingTreeSanitizer(validator);
-        html = '<svg version="1.1">' + svg + "</svg>";
-        t1 = document;
-        t2 = t1.body;
-        fragment = (t2 && C.BodyElement_methods).createFragment$2$treeSanitizer(t2, html, treeSanitizer);
-        svgFragment = t1.createDocumentFragment();
-        fragment.toString;
-        t1 = new W._ChildNodeListLazy(fragment);
-        root = t1.get$single(t1);
-        for (; t1 = root.firstChild, t1 != null;)
-          svgFragment.appendChild(t1);
-        return svgFragment;
-      },
-      $isSvgElement: 1,
       $isInterceptor: 1,
       "%": "SVGComponentTransferFunctionElement|SVGDescElement|SVGDiscardElement|SVGFEDistantLightElement|SVGFEFuncAElement|SVGFEFuncBElement|SVGFEFuncGElement|SVGFEFuncRElement|SVGFEMergeNodeElement|SVGFEPointLightElement|SVGFESpotLightElement|SVGMetadataElement|SVGStopElement|SVGStyleElement|SVGTitleElement;SVGElement"
     },
@@ -7678,81 +7525,61 @@
       new W._EventStreamSubscription(0, window, "mousemove", W._wrapZone(new E.main_closure()), false, [W.MouseEvent])._tryResume$0();
       new W._EventStreamSubscription(0, window, "keyup", W._wrapZone(new E.main_closure0()), false, [W.KeyboardEvent])._tryResume$0();
     }, "call$0", "index__main$closure", 0, 0, 1],
-    stringToColor: function(str) {
-      var t1, hash, i, colour, x;
-      for (t1 = str.length, hash = 0, i = 0; i < t1; ++i)
-        hash = C.JSString_methods.codeUnitAt$1(str, i) + ((hash << 5 >>> 0) - hash);
-      for (colour = "#", x = 0; x < 3; ++x) {
-        str = "00" + C.JSInt_methods.toRadixString$1(C.JSInt_methods._shrOtherPositive$1(hash, x * 8) & 255, 16);
-        colour += C.JSString_methods.substring$1(str, str.length - 2);
-      }
-      return colour;
-    },
     createElement: function(color, key, x, y) {
-      var t1, ele, t2, t3;
-      t1 = document;
-      ele = t1.createElement("div");
-      t2 = ele.style;
-      t2.position = "absolute";
-      t2 = ele.style;
-      t2.zIndex = "999999999";
-      t2 = ele.style;
-      t3 = H.S(y) + "px";
-      t2.top = t3;
-      t2 = ele.style;
-      t3 = H.S(x) + "px";
-      t2.left = t3;
-      t2 = ele.style;
-      t2.display = "inline-block";
-      t2 = ele.style;
-      t2.padding = "3px 5px";
-      t2 = ele.style;
-      t2.fontSize = "11px";
-      t2 = ele.style;
-      t2.lineHeight = "10px";
-      t2 = ele.style;
-      t2.color = color;
-      t2 = ele.style;
-      t2.verticalAlign = "middle";
-      t2 = ele.style;
-      t2.backgroundColor = "#fcfcfc";
-      t2 = ele.style;
-      t2.border = "solid 1px #ccc";
-      t2 = ele.style;
-      t2.borderBottomColor = "#bbb";
-      t2 = ele.style;
-      C.CssStyleDeclaration_methods._setPropertyHelper$3(t2, (t2 && C.CssStyleDeclaration_methods)._browserPropertyName$1(t2, "border-radius"), "3px", "");
-      t2 = ele.style;
-      C.CssStyleDeclaration_methods._setPropertyHelper$3(t2, (t2 && C.CssStyleDeclaration_methods)._browserPropertyName$1(t2, "box-shadow"), "inset 0 -1px 0 #bbb", "");
-      J.set$innerHtml$x(ele, key);
-      t1.body.appendChild(ele);
+      var ele, t1, t2;
+      ele = W.Element_Element$html("<div>" + key + "</div>", null, null);
+      t1 = J.get$style$x(ele);
+      t1.position = "absolute";
+      t1 = ele.style;
+      t1.zIndex = "999999999";
+      t1 = ele.style;
+      t2 = H.S(y) + "px";
+      t1.top = t2;
+      t1 = ele.style;
+      t2 = H.S(x) + "px";
+      t1.left = t2;
+      t1 = ele.style;
+      t1.display = "inline-block";
+      t1 = ele.style;
+      t1.padding = "3px 5px";
+      t1 = ele.style;
+      t1.fontSize = "11px";
+      t1 = ele.style;
+      t1.lineHeight = "10px";
+      t1 = ele.style;
+      t1.color = color;
+      t1 = ele.style;
+      t1.verticalAlign = "middle";
+      t1 = ele.style;
+      t1.backgroundColor = "#fcfcfc";
+      t1 = ele.style;
+      t1.border = "solid 1px #ccc";
+      t1 = ele.style;
+      t1.borderBottomColor = "#bbb";
+      t1 = ele.style;
+      C.CssStyleDeclaration_methods._setPropertyHelper$3(t1, (t1 && C.CssStyleDeclaration_methods)._browserPropertyName$1(t1, "border-radius"), "3px", "");
+      t1 = ele.style;
+      C.CssStyleDeclaration_methods._setPropertyHelper$3(t1, (t1 && C.CssStyleDeclaration_methods)._browserPropertyName$1(t1, "box-shadow"), "inset 0 -1px 0 #bbb", "");
+      document.body.appendChild(ele);
       P.Timer_Timer(C.Duration_500000, new E.createElement_closure(ele));
-    },
-    Coordinate: {
-      "^": "Object;x,y"
-    },
-    RandomCoordinate: {
-      "^": "Coordinate;x,y"
     },
     main_closure: {
       "^": "Closure:14;",
       call$1: function($event) {
         var t1 = J.getInterceptor$x($event);
-        $.$get$coordinate().x = J.get$x$x(t1.get$page($event));
-        $.$get$coordinate().y = J.get$y$x(t1.get$page($event));
-        return;
+        $.mousePoint = new P.Point(J.get$x$x(t1.get$page($event)), J.get$y$x(t1.get$page($event)), [null]);
       }
     },
     main_closure0: {
       "^": "Closure:15;",
       call$1: function($event) {
-        var key, t1, x, y, radius, angle, t2, t3;
+        var key, t1, x, y, radius, angle, t2;
         key = C.JSString_methods.$add(J.toString$0$(J.get$keyCode$x($event)), $event.key);
-        t1 = $.$get$coordinate();
+        t1 = $.$get$mousePoint();
         x = t1.x;
         y = t1.y;
-        radius = 50 + $.$get$random().nextInt$1(50);
-        angle = $.$get$random().nextInt$1(360);
+        radius = 50 + C.C__JSRandom.nextInt$1(50);
+        angle = C.C__JSRandom.nextInt$1(360);
         if (angle >= 0 && angle < 90) {
           t1 = angle * 2 * 3.141592653589793 / 360;
           t2 = Math.sin(t1);
@@ -7792,15 +7619,12 @@
             return y.$add();
           y += radius * t2;
         }
-        t1 = $.$get$randomCoordinate();
-        t1.x = x;
-        t1.y = y;
-        t2 = $.$get$keyboardMap();
-        t3 = $event.keyCode;
-        if (t3 >>> 0 !== t3 || t3 >= 256)
-          return H.ioore(t2, t3);
-        t3 = t2[t3];
-        E.createElement(E.stringToColor(key + " " + key), t3, t1.x, t1.y);
+        t1 = $.$get$keyboardMap();
+        t2 = $event.keyCode;
+        if (t2 >>> 0 !== t2 || t2 >= 256)
+          return H.ioore(t1, t2);
+        t2 = t1[t2];
+        E.createElement(X.stringToColor(key + " " + key), t2, x, y);
         return;
       }
     },
@@ -7810,7 +7634,19 @@
         J.remove$0$ax(this.ele);
       }
     }
-  }, 1]];
+  }, 1], ["", "../src/keyBordMaps.dart",, E, {}], ["", "../src/stringToColor.dart",, X, {
+    "^": "",
+    stringToColor: function(str) {
+      var t1, hash, i, colour, x;
+      for (t1 = str.length, hash = 0, i = 0; i < t1; ++i)
+        hash = C.JSString_methods.codeUnitAt$1(str, i) + ((hash << 5 >>> 0) - hash);
+      for (colour = "#", x = 0; x < 3; ++x) {
+        str = "00" + C.JSInt_methods.toRadixString$1(C.JSInt_methods._shrOtherPositive$1(hash, x * 8) & 255, 16);
+        colour += C.JSString_methods.substring$1(str, str.length - 2);
+      }
+      return colour;
+    }
+  }]];
   setupProgram(dart, 0);
   // getInterceptor methods
   J.getInterceptor = function(receiver) {
@@ -7910,9 +7746,6 @@
   J.set$href$x = function(receiver, value) {
     return J.getInterceptor$x(receiver).set$href(receiver, value);
   };
-  J.set$innerHtml$x = function(receiver, value) {
-    return J.getInterceptor$x(receiver).set$innerHtml(receiver, value);
-  };
   J.get$attributes$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$attributes(receiver);
   };
@@ -7931,14 +7764,14 @@
   J.get$name$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$name(receiver);
   };
-  J.get$nodes$x = function(receiver) {
-    return J.getInterceptor$x(receiver).get$nodes(receiver);
-  };
   J.get$parentNode$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$parentNode(receiver);
   };
   J.get$previousNode$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$previousNode(receiver);
+  };
+  J.get$style$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$style(receiver);
   };
   J.get$tagName$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$tagName(receiver);
@@ -7974,9 +7807,6 @@
   };
   J.contains$2$asx = function(receiver, a0, a1) {
     return J.getInterceptor$asx(receiver).contains$2(receiver, a0, a1);
-  };
-  J.createFragment$3$treeSanitizer$validator$x = function(receiver, a0, a1, a2) {
-    return J.getInterceptor$x(receiver).createFragment$3$treeSanitizer$validator(receiver, a0, a1, a2);
   };
   J.elementAt$1$ax = function(receiver, a0) {
     return J.getInterceptor$ax(receiver).elementAt$1(receiver, a0);
@@ -8286,15 +8116,11 @@
     return P.LinkedHashSet_LinkedHashSet$from(["A", "ABBR", "ACRONYM", "ADDRESS", "AREA", "ARTICLE", "ASIDE", "AUDIO", "B", "BDI", "BDO", "BIG", "BLOCKQUOTE", "BR", "BUTTON", "CANVAS", "CAPTION", "CENTER", "CITE", "CODE", "COL", "COLGROUP", "COMMAND", "DATA", "DATALIST", "DD", "DEL", "DETAILS", "DFN", "DIR", "DIV", "DL", "DT", "EM", "FIELDSET", "FIGCAPTION", "FIGURE", "FONT", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "I", "IFRAME", "IMG", "INPUT", "INS", "KBD", "LABEL", "LEGEND", "LI", "MAP", "MARK", "MENU", "METER", "NAV", "NOBR", "OL", "OPTGROUP", "OPTION", "OUTPUT", "P", "PRE", "PROGRESS", "Q", "S", "SAMP", "SECTION", "SELECT", "SMALL", "SOURCE", "SPAN", "STRIKE", "STRONG", "SUB", "SUMMARY", "SUP", "TABLE", "TBODY", "TD", "TEXTAREA", "TFOOT", "TH", "THEAD", "TIME", "TR", "TRACK", "TT", "U", "UL", "VAR", "VIDEO", "WBR"], null);
   }, "_Html5NodeValidator__allowedElements", "_Html5NodeValidator__attributeValidators", "$get$_Html5NodeValidator__attributeValidators", function() {
     return P.LinkedHashMap__makeEmpty();
-  }, "_Html5NodeValidator__attributeValidators", "keyboardMap", "$get$keyboardMap", function() {
+  }, "_Html5NodeValidator__attributeValidators", "mousePoint", "$get$mousePoint", function() {
+    return P.Point$(0, 0, null);
+  }, "mousePoint", "keyboardMap", "$get$keyboardMap", function() {
     return ["", "", "", "CANCEL", "", "", "HELP", "", "BACK SPACE", "TAB", "", "", "CLEAR", "ENTER", "ENTER SPECIAL", "", "SHIFT", "CONTROL", "ALT", "PAUSE", "CAPS LOCK", "KANA", "EISU", "JUNJA", "FINAL", "HANJA", "", "ESCAPE", "CONVERT", "NONCONVERT", "ACCEPT", "MODECHANGE", "SPACE", "PAGE UP", "PAGE DOWN", "END", "HOME", "LEFT", "UP", "RIGHT", "DOWN", "SELECT", "PRINT", "EXECUTE", "PRINTSCREEN", "INSERT", "DELETE", "", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "COLON", "SEMICOLON", "LESS THAN", "EQUALS", "GREATER THAN", "QUESTION MARK", "AT", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "OS KEY", "", "CONTEXT MENU", "", "SLEEP", "NUMPAD0", "NUMPAD1", "NUMPAD2", "NUMPAD3", "NUMPAD4", "NUMPAD5", "NUMPAD6", "NUMPAD7", "NUMPAD8", "NUMPAD9", "MULTIPLY", "ADD", "SEPARATOR", "SUBTRACT", "DECIMAL", "DIVIDE", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17", "F18", "F19", "F20", "F21", "F22", "F23", "F24", "", "", "", "", "", "", "", "", "NUM LOCK", "SCROLL LOCK", "WIN OEM FJ JISHO", "WIN OEM FJ MASSHOU", "WIN OEM FJ TOUROKU", "WIN OEM FJ LOYA", "WIN OEM FJ ROYA", "", "", "", "", "", "", "", "", "", "CIRCUMFLEX", "EXCLAMATION", "DOUBLE QUOTE", "HASH", "DOLLAR", "PERCENT", "AMPERSAND", "UNDERSCORE", "OPEN PAREN", "CLOSE PAREN", "ASTERISK", "PLUS", "PIPE", "HYPHEN MINUS", "OPEN CURLY BRACKET", "CLOSE CURLY BRACKET", "TILDE", "", "", "", "", "VOLUME MUTE", "VOLUME DOWN", "VOLUME UP", "", "", "SEMICOLON", "EQUALS", "COMMA", "MINUS", "PERIOD", "SLASH", "BACK QUOTE", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "OPEN BRACKET", "BACK SLASH", "CLOSE BRACKET", "QUOTE", "", "META", "ALTGR", "", "WIN ICO HELP", "WIN ICO 00", "", "WIN ICO CLEAR", "", "", "WIN OEM RESET", "WIN OEM JUMP", "WIN OEM PA1", "WIN OEM PA2", "WIN OEM PA3", "WIN OEM WSCTRL", "WIN OEM CUSEL", "WIN OEM ATTN", "WIN OEM FINISH", "WIN OEM COPY", "WIN OEM AUTO", "WIN OEM ENLW", "WIN OEM BACKTAB", "ATTN", "CRSEL", "EXSEL", "EREOF", "PLAY", "ZOOM", "", "PA1", "WIN OEM CLEAR", ""];
-  }, "keyboardMap", "coordinate", "$get$coordinate", function() {
-    return new E.Coordinate(0, 0);
-  }, "coordinate", "randomCoordinate", "$get$randomCoordinate", function() {
-    return new E.RandomCoordinate(0, 0);
-  }, "randomCoordinate", "random", "$get$random", function() {
-    return C.C__JSRandom;
-  }, "random"]);
+  }, "keyboardMap"]);
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
