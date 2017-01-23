@@ -22,6 +22,8 @@ function headerStream() {
 // @license           The MIT License (MIT); http://opensource.org/licenses/MIT
 // ==/UserScript==
 
+// Github源码: https://github.com/axetroy/type-up
+
 `);
 }
 
