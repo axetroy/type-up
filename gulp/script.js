@@ -33,7 +33,8 @@ gulp.task('clean', function () {
 gulp.task('script', function () {
   return gulp.src(path.join(paths.src, '*.dart'))
     .pipe(dart({
-      "dest": paths.dist
+      "dest": paths.dist,
+      "checked": true
     }))
     .pipe(headerStream())
     .pipe(gulp.dest(''));
@@ -43,7 +44,8 @@ gulp.task('build', function () {
   return gulp.src(path.join(paths.src, '*.dart'))
     .pipe(dart({
       "dest": paths.dist,
-      "minify": "true"
+      "minify": "true",
+      "checked": true
     }))
     .pipe(uglify())
     .pipe(headerStream())
