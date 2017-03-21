@@ -54,8 +54,8 @@ gulp.task('build', function () {
     .pipe(gulp.dest(''));
 });
 
-gulp.task('watch', ['clean', 'build'], function () {
-  gulp.watch(path.join(paths.src, '*.dart'), ['build']);
+gulp.task('watch', ['clean', 'script'], function () {
+  gulp.watch(path.join(paths.src, '*.dart'), ['script']);
 });
 
 gulp.task('default', ['clean'], function () {
