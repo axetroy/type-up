@@ -17,7 +17,7 @@ function headerStream() {
 // @author        Axetroy
 // @include       *
 // @grant         none
-// @run-at        document-start
+// @run-at        document-idle
 // @namespace         https://greasyfork.org/zh-CN/users/3400-axetroy
 // @license           The MIT License (MIT); http://opensource.org/licenses/MIT
 // ==/UserScript==
