@@ -1,5 +1,5 @@
 {
   "hooks": {
-    "add": "yarn && pub get"
+    "add": "yarn"
   }
 }
